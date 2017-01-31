@@ -1,0 +1,82 @@
+package com.temnenkov.glvrdbot;
+
+import com.temnenkov.glvrd.Fragment;
+import com.temnenkov.glvrd.ProofreadResponse;
+import org.jsoup.parser.Parser;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+
+
+public class GlvrdResponseHandler {
+
+    public String handle(String text, ProofreadResponse resp) {
+
+        if (resp.getFragments() == null || resp.getFragments().isEmpty()) {
+            return "0 стоп-слов, замечаний к тексту нет.";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format("Обнаружено стоп-слов: {0}\n", resp.getFragments().size()));
+
+        resp.getFragments().forEach(fragment -> sb.append(process(text, fragment)));
+
+        sb.append("\n\nИсходный текст:\n");
+        sb.append(processText(text, resp.getFragments()));
+
+        return sb.toString();
+    }
+
+    private String process(String text, Fragment frag) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("\n");
+        sb.append("<b>");
+        sb.append(text.substring(frag.getStart(), frag.getEnd()));
+        sb.append("</b>");
+        if (frag.getHint() != null) {
+            sb.append(": ");
+            sb.append(smooth(frag.getHint().getName()));
+            sb.append(" (");
+            sb.append(smooth(frag.getHint().getDescription()));
+            sb.append(")");
+        }
+
+        return sb.toString();
+    }
+
+    String processText(String text, Collection<Fragment> frags) {
+
+        List<Fragment> workset = new ArrayList<>(frags);
+        workset.sort(Comparator.comparingInt(Fragment::getStart));
+
+        StringBuilder sb = new StringBuilder();
+
+        int prev = 0;
+        for (int i = 0; i < workset.size(); ++i) {
+            Fragment f = workset.get(i);
+            if (f.getStart() > prev){
+                sb.append(text.substring(prev, f.getStart()));
+            }
+            sb.append("<b>");
+            sb.append(text.substring(f.getStart(), f.getEnd()));
+            sb.append("</b>");
+            prev = f.getEnd();
+        }
+        if (text.length() > prev){
+            sb.append(text.substring(prev, text.length()));
+        }
+
+        return sb.toString();
+    }
+
+    String smooth(String s) {
+        if (s == null || s.length() == 0) {
+            return "";
+        }
+        return Parser.unescapeEntities(s.substring(0, 1).toLowerCase() + s.substring(1), false);
+    }
+}
