@@ -19,11 +19,11 @@ public class GlvrdResponseHandler {
     public String handle(String text, ProofreadResponse resp) {
 
         if (resp.getFragments() == null || resp.getFragments().isEmpty()) {
-            return "0 стоп-слов, замечаний к тексту нет.";
+            return "Замечаний нет.";
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormat.format("Обнаружено стоп-слов: {0}\n", resp.getFragments().size()));
+        sb.append(MessageFormat.format("Обнаружено замечаний: {0}\n", resp.getFragments().size()));
 
         resp.getFragments().forEach(fragment -> sb.append(process(text, fragment)));
 

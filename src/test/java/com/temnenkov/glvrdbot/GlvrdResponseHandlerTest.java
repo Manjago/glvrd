@@ -27,7 +27,7 @@ public class GlvrdResponseHandlerTest {
         final ProofreadResponse resp = new ProofreadResponse();
         String s = h.handle("any", resp);
         System.out.println(s);
-        assertEquals("0 стоп-слов, замечаний к тексту нет.", s);
+        assertEquals("Замечаний нет.", s);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class GlvrdResponseHandlerTest {
         frag.setHint(hint);
         resp.setFragments(f);
         String s = h.handle("Замечательный", resp);
-        assertEquals("Обнаружено стоп-слов: 1\n" +
+        assertEquals("Обнаружено замечаний: 1\n" +
                 "\n" +
                 "<b>Замечательный</b>: необъективная оценка (удалите или докажите фактами)\n" +
                 "\nИсходный текст:\n" +
@@ -57,7 +57,7 @@ public class GlvrdResponseHandlerTest {
         final ProofreadResponse resp = getProofreadResponseTwo();
         String s = h.handle("Я замечательный", resp);
         System.out.println(s);
-        assertEquals("Обнаружено стоп-слов: 2\n" +
+        assertEquals("Обнаружено замечаний: 2\n" +
                 "\n" +
                 "<b>Я</b>: личное местоимение (проверьте, можно ли удалить это местоимение без потери смысла)\n" +
                 "<b>замечательный</b>: необъективная оценка (удалите или докажите фактами)\n\nИсходный текст:\n" +
