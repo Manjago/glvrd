@@ -2,6 +2,7 @@ package com.temnenkov.glvrdbot;
 
 import com.temnenkov.glvrd.Fragment;
 import com.temnenkov.glvrd.ProofreadResponse;
+import com.temnenkov.glvrd.StatCalcer;
 import org.jsoup.parser.Parser;
 
 import java.text.MessageFormat;
@@ -12,6 +13,8 @@ import java.util.List;
 
 
 public class GlvrdResponseHandler {
+
+    private final StatCalcer statCalcer = new StatCalcer();
 
     public String handle(String text, ProofreadResponse resp) {
 
@@ -26,6 +29,9 @@ public class GlvrdResponseHandler {
 
         sb.append("\n\nИсходный текст:\n");
         sb.append(processText(text, resp.getFragments()));
+
+        sb.append("\n\nСтатистика:\n");
+        sb.append(statCalcer.stat(text).info());
 
         return sb.toString();
     }
