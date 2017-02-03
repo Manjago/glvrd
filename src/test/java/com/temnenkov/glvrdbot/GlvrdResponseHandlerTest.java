@@ -45,8 +45,8 @@ public class GlvrdResponseHandlerTest {
         resp.setFragments(f);
         String s = h.handle("Замечательный", resp);
         assertEquals("Исходный текст:\n" +
-                "<b>Замечательный</b>\n" +
                 "\n" +
+                "<b>Замечательный</b>\n" +
                 "\n" +
                 "Обнаружено 1 замечание.\n" +
                 "\n" +
@@ -62,8 +62,8 @@ public class GlvrdResponseHandlerTest {
         String s = h.handle("Я замечательный", resp);
         System.out.println(s);
         assertEquals("Исходный текст:\n" +
-                "<b>Я</b> <b>замечательный</b>\n" +
                 "\n" +
+                "<b>Я</b> <b>замечательный</b>\n" +
                 "\n" +
                 "Обнаружено 2 замечания.\n" +
                 "\n" +
