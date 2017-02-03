@@ -37,7 +37,7 @@ public class StatCalcerTest {
 
     @Test
     public void stat3_4_info() throws Exception {
-        assertEquals("знаков (без пробелов): " + 9 + ", знаков (с пробелами): " + 11, statCalcer.stat("Три\r\n Четыре ").info());
+        assertEquals("9 знаков (без пробелов), 11 знаков (с пробелами)", statCalcer.stat("Три\r\n Четыре ").info());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.temnenkov.glvrdbot;
 
+import com.temnenkov.glvrd.Declension;
 import com.temnenkov.glvrd.Fragment;
 import com.temnenkov.glvrd.ProofreadResponse;
 import com.temnenkov.glvrd.StatCalcer;
@@ -15,6 +16,8 @@ import java.util.List;
 public class GlvrdResponseHandler {
 
     private final StatCalcer statCalcer = new StatCalcer();
+    private final Declension declension = new Declension();
+    private final Declension.DeclensionInfo info = new Declension.DeclensionInfo("замечание", "замечания", "замечаний");
 
     public String handle(String text, ProofreadResponse resp) {
 
@@ -23,7 +26,8 @@ public class GlvrdResponseHandler {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormat.format("Обнаружено замечаний: {0}\n", resp.getFragments().size()));
+        sb.append(MessageFormat.format("Обнаружено {0} {1}:\n", resp.getFragments().size(),
+                declension.decline(resp.getFragments().size(), info)));
 
         resp.getFragments().forEach(fragment -> sb.append(process(text, fragment)));
 

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.text.MessageFormat;
 
 public class StatCalcer {
 
@@ -46,6 +47,13 @@ public class StatCalcer {
         private int symsWithSpaces;
         private int symsNoSpaces;
 
+        private static final Declension.DeclensionInfo INFO_NO_SPACES = new Declension.DeclensionInfo("знак (без пробелов)",
+                "знака (без пробелов)", "знаков (без пробелов)");
+        private static final Declension.DeclensionInfo INFO_WITH_SPACES = new Declension.DeclensionInfo("знак (с пробелами)",
+                "знака (с пробелами)", "знаков (с пробелами)");
+
+        private static final Declension DECLENSION = new Declension();
+
         private void incWithSpaces() {
             ++symsWithSpaces;
         }
@@ -55,7 +63,8 @@ public class StatCalcer {
         }
 
         public String info(){
-            return "знаков (без пробелов): " + symsNoSpaces + ", знаков (с пробелами): " + symsWithSpaces;
+            return MessageFormat.format("{0} {1}, {2} {3}",
+                    symsNoSpaces,  DECLENSION.decline(symsNoSpaces, INFO_NO_SPACES), symsWithSpaces, DECLENSION.decline(symsWithSpaces, INFO_WITH_SPACES));
         }
     }
 
