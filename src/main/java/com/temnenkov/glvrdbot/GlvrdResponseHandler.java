@@ -26,12 +26,12 @@ public class GlvrdResponseHandler {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormat.format("Обнаружено {0} {1}.", resp.getFragments().size(),
-                declension.decline(resp.getFragments().size(), info)));
-
-        sb.append("\n\nИсходный текст:\n");
+        sb.append("Исходный текст:\n");
         sb.append(processText(text, resp.getFragments()));
         sb.append("\n");
+
+        sb.append(MessageFormat.format("\n\nОбнаружено {0} {1}.\n", resp.getFragments().size(),
+                declension.decline(resp.getFragments().size(), info)));
 
         resp.getFragments().forEach(fragment -> sb.append(process(text, fragment)));
 

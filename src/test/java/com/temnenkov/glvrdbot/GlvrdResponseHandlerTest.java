@@ -44,10 +44,11 @@ public class GlvrdResponseHandlerTest {
         frag.setHint(hint);
         resp.setFragments(f);
         String s = h.handle("Замечательный", resp);
-        assertEquals("Обнаружено 1 замечание.\n" +
-                "\n" +
-                "Исходный текст:\n" +
+        assertEquals("Исходный текст:\n" +
                 "<b>Замечательный</b>\n" +
+                "\n" +
+                "\n" +
+                "Обнаружено 1 замечание.\n" +
                 "\n" +
                 "<b>Замечательный</b>: необъективная оценка (удалите или докажите фактами)\n" +
                 "\n" +
@@ -60,10 +61,11 @@ public class GlvrdResponseHandlerTest {
         final ProofreadResponse resp = getProofreadResponseTwo();
         String s = h.handle("Я замечательный", resp);
         System.out.println(s);
-        assertEquals("Обнаружено 2 замечания.\n" +
-                "\n" +
-                "Исходный текст:\n" +
+        assertEquals("Исходный текст:\n" +
                 "<b>Я</b> <b>замечательный</b>\n" +
+                "\n" +
+                "\n" +
+                "Обнаружено 2 замечания.\n" +
                 "\n" +
                 "<b>Я</b>: личное местоимение (проверьте, можно ли удалить это местоимение без потери смысла)\n" +
                 "<b>замечательный</b>: необъективная оценка (удалите или докажите фактами)\n" +
