@@ -31,7 +31,7 @@ public class GlvrdResponseHandler {
 
         resp.getFragments().forEach(fragment -> sb.append(process(text, fragment)));
 
-        sb.append("\n\nИсходный текст:\n");
+        sb.append("\n\nИсходный текст:\n\n");
         sb.append(processText(text, resp.getFragments()));
 
         sb.append("\n\nСтатистика:\n");
