@@ -39,7 +39,6 @@
                     <target>${java.compiler.version}</target>
                     <fork>true</fork>
                     <compilerVersion>${java.compiler.version}</compilerVersion>
-                    <executable>${jdk8.hotspot}/bin/javac</executable>
                     <verbose>true</verbose>
                 </configuration>
             </plugin>
@@ -55,7 +54,6 @@
                             <mainClass>com.temnenkov.glvrdbot.MainBot</mainClass>
                         </manifest>
                         <manifestEntries>
-                            <CI-Build>${BuildNumber}</CI-Build>
                             <Build-Time>${maven.build.timestamp}</Build-Time>
                         </manifestEntries>
                     </archive>
@@ -102,15 +100,6 @@
                 </executions>
             </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>${sonar.plugin.custom.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <extensions>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
