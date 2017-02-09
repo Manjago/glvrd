@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<configuration>
+<configuration scanPeriod="30 seconds" scan="true">
 
     <appender name="Default" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <encoder>
@@ -26,5 +26,6 @@
     <logger name="org.springframework.jdbc" level="WARN"/>
     <logger name="org.springframework.beans" level="INFO"/>
     <logger name="org.springframework.integration.endpoint.PollingConsumer" level="INFO"/>
+    <logger name="com.temnenkov.statstore.JdbcStatStore" level="DEBUG"/>
 
 </configuration>
