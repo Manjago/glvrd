@@ -21,17 +21,18 @@
 
 package org.jdesktop.http;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
 import org.jdesktop.beans.AbstractBean;
 import org.jdesktop.http.Header.Element;
 import org.jdesktop.xpath.XPathUtils;
 import org.w3c.dom.Document;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>Represents an http request. A <code>Request</code> is constructed and then
@@ -511,7 +512,7 @@ public class Request extends AbstractBean {
             if (username == null) {
                 removeHeader("authentication");
             } else {
-                headers.put("authentication", new Header("Authentication", "Basic " + 
+                headers.put("authentication", new Header("Authentication", "Basic " +
                         base64Encode(username + ":" + getPassword())));
             }
         } catch (Exception e) {

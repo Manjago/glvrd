@@ -25,6 +25,11 @@ public class Declension {
         private String one;
         private String two;
         private String five;
+
+        public static DeclensionInfo create(){
+            return new Declension.DeclensionInfo("замечание", "замечания", "замечаний");
+        }
     }
+
 
 }

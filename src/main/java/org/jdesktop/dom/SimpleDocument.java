@@ -21,33 +21,18 @@
 
 package org.jdesktop.dom;
 
-import java.lang.ref.SoftReference;
-import java.util.HashMap;
-import java.util.Map;
+import org.jdesktop.xpath.XPathUtils;
+import org.w3c.dom.*;
+
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
-import org.jdesktop.xpath.XPathUtils;
-import org.w3c.dom.Attr;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Comment;
-import org.w3c.dom.DOMConfiguration;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Element;
-import org.w3c.dom.EntityReference;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.ProcessingInstruction;
-import org.w3c.dom.Text;
-import org.w3c.dom.UserDataHandler;
+import java.lang.ref.SoftReference;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * <p>A DOM {@link org.w3c.dom.Document} that makes it easier to work with DOM
+ * <p>A DOM {@link Document} that makes it easier to work with DOM
  * documents. This class simply wraps a delegate DOM <code>Document</code> and
  * delegates all calls to the Document. This allows this class to work with
  * any DOM Document.</p>

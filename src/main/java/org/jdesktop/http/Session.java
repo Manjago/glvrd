@@ -21,27 +21,19 @@
 
 package org.jdesktop.http;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpRetryException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.net.UnknownHostException;
-import java.security.cert.X509Certificate;
+import org.jdesktop.beans.AbstractBean;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import java.io.*;
+import java.net.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
-import javax.net.ssl.*;
-import org.jdesktop.beans.AbstractBean;
 
 /**
  * <p>Represents a user's "session" on the web. Think of it as a "tab" in a
@@ -156,53 +148,53 @@ public class Session extends AbstractBean {
             }
             SSLContext context = SSLContext.getInstance("SSL");
             context.init(
-              null, 
-              new TrustManager[] {tm}, 
+              null,
+              new TrustManager[] {tm},
               null);
             return context.getSocketFactory();
         } catch (Exception e) {
             throw new AssertionError(e);
         }
     }
-    
+
     public final long getTotalBytes() {
         return totalBytes;
     }
-    
+
     private void setTotalBytes(long bytes) {
         long old = totalBytes;
         float oldProgress = getProgress();
         firePropertyChange("totalBytes", old, this.totalBytes = bytes);
         firePropertyChange("progress", oldProgress, getProgress());
     }
-    
+
     public final long getBytesSoFar() {
         return bytesSoFar;
     }
-    
+
     private void setBytesSoFar(long bytes) {
         long old = this.bytesSoFar;
         float oldProgress = getProgress();
         firePropertyChange("bytesSoFar", old, this.bytesSoFar = bytes);
         firePropertyChange("progress", oldProgress, getProgress());
     }
-    
+
     public final float getProgress() {
         if (totalBytes <= 0) return -1f;
         float total = totalBytes;
         float num = bytesSoFar;
         return num / total;
     }
-    
+
     public final State getState() {
         return state;
     }
-    
+
     protected void setState(State s) {
         State old = this.state;
         firePropertyChange("state", old, this.state = s);
     }
-    
+
     /**
      * Constructs and executes a {@link Request} using the Method.GET method.
      * This method blocks.
@@ -217,7 +209,7 @@ public class Session extends AbstractBean {
     public final Response get(String url) throws Exception {
         return execute(Method.GET, url);
     }
-    
+
     /**
      * Constructs and executes a {@link Request} using the Method.GET method.
      * This method blocks.
@@ -233,7 +225,7 @@ public class Session extends AbstractBean {
     public final Response get(String url, Parameter... params) throws Exception {
         return execute(Method.GET, url, params);
     }
-    
+
     /**
      * Constructs and executes a {@link Request} using the Method.POST method.
      * This method blocks.
@@ -248,7 +240,7 @@ public class Session extends AbstractBean {
     public final Response post(String url) throws Exception {
         return execute(Method.POST, url);
     }
-    
+
     /**
      * Constructs and executes a {@link Request} using the Method.POST method.
      * This method blocks.
@@ -264,7 +256,7 @@ public class Session extends AbstractBean {
     public final Response post(String url, Parameter... params) throws Exception {
         return execute(Method.POST, url, params);
     }
-    
+
     /**
      * Constructs and executes a {@link Request} using the Method.PUT method.
      * This method blocks.
@@ -279,7 +271,7 @@ public class Session extends AbstractBean {
     public final Response put(String url) throws Exception {
         return execute(Method.PUT, url);
     }
-    
+
     /**
      * Constructs and executes a {@link Request} using the Method.PUT method.
      * This method blocks.
@@ -295,7 +287,7 @@ public class Session extends AbstractBean {
     public final Response put(String url, Parameter... params) throws Exception {
         return execute(Method.PUT, url, params);
     }
-    
+
     /**
      * Constructs and executes a {@link Request}, and returns the {@link Response}.
      * This method blocks. The given <code>method</code>, <code>url</code>
@@ -313,7 +305,7 @@ public class Session extends AbstractBean {
     public final Response execute(Method method, String url) throws Exception {
         return execute(method, url, new Parameter[0]);
     }
-    
+
     /**
      * Constructs and executes a {@link Request}, and returns the {@link Response}.
      * This method blocks. The given <code>method</code>, <code>url</code>, and
@@ -336,7 +328,7 @@ public class Session extends AbstractBean {
         if (url == null) {
             throw new NullPointerException("url cannot be null");
         }
-        
+
         //create and handle the request
         Request req = new Request();
         req.setParameters(params);
@@ -345,7 +337,7 @@ public class Session extends AbstractBean {
         //if the url had any params, they will be hosed!
         return execute(req);
     }
-    
+
     /**
      * Executes the given {@link Request}, and returns a {@link Response}.
      * This method blocks.
@@ -361,14 +353,14 @@ public class Session extends AbstractBean {
             setTotalBytes(-1);
             setBytesSoFar(0);
             setState(State.CONNECTING);
-            
+
             // 0. Create the URL
             StringBuffer surl = new StringBuffer(req.getUrl());
             if (surl.length() == 0) {
                 setState(State.FAILED);
                 throw new IllegalStateException("Cannot excecute a request that has no URL specified");
             }
-            
+
             char delim = '?';
             for (Parameter p : req.getParameters()) {
                 surl.append(delim);
@@ -377,7 +369,7 @@ public class Session extends AbstractBean {
                 String value = URLEncoder.encode(p.getValue(), "UTF-8");
                 surl.append(name + "=" + value);
             }
-            
+
             // 1. Create the HttpURLConnection
             URL url = createURL(surl.toString());
             URLConnection conn = url.openConnection();
@@ -386,24 +378,24 @@ public class Session extends AbstractBean {
                 throw new IllegalStateException("Must be an HTTP or HTTPS based URL");
             }
             HttpURLConnection http = (HttpURLConnection)conn;
-            
+
             // 2. Configure the connection
             http.setRequestMethod(req.getMethod().name());
             http.setInstanceFollowRedirects(req.getFollowRedirects());
-            
+
             //TODO support chunked streaming?
 //            http.setChunkedStreamingMode(req.getChunkSize() > 0 ? req.getChunkSize() : -1);
             //TODO support connection timeout? (probably a good idea)
 //            http.setConnectTimeout(req.getConnectionTimeout());
             //TODO fixed length streaming?
 //            http.setFixedLengthStreamingMode(contentLength);
-            
+
             for (Header h : req.getHeaders()) {
                 http.setRequestProperty(h.getName(), h.getValue());
             }
-            
+
             // 3. If I supported a cache, this is where I'd configure it!
-            
+
             // 4. Configure the request parameters
             if (http instanceof HttpsURLConnection) {
                 HttpsURLConnection https = (HttpsURLConnection)http;
@@ -425,7 +417,7 @@ public class Session extends AbstractBean {
                 }
             }
             setTotalBytes(contentLength);
-            
+
             // 5. Set the request body, if any.
             setState(State.SENDING);
             OutputStream out = null;
@@ -448,7 +440,7 @@ public class Session extends AbstractBean {
                     body.close();
                 }
             }
-            
+
             // 6. Get the response
             // Read the response headers
             // TODO Content-Encoding might not be in this set of headers. Need to test.
@@ -473,7 +465,7 @@ public class Session extends AbstractBean {
                 headers.add(h);
                 if ("Content-Type".equalsIgnoreCase(headerKey)) contentType = h;
             }
-            
+
             // Read the response, possibly from the error stream. Automatically
             // unzip the response if it was gzip encoded
             byte[] responseBody = null;
@@ -514,7 +506,7 @@ public class Session extends AbstractBean {
             } finally {
                 if (responseStream != null) responseStream.close();
             }
-            
+
             // figure out the "base url" from which relative urls would be
             // computed
             String foo = "foo";
@@ -533,12 +525,12 @@ public class Session extends AbstractBean {
                     if (index > 0) charset = contentType.getValue().substring(index+1);
                 }
             }
-            
+
             // construct the response
             Response response = new Response(responseCode, http.getResponseMessage(),
                     responseBody, charset, headers, baseUrl);
-            
-            
+
+
             // TODO
             // 7. Disconnect (as it is unclear how to reuse the HttpURLConnection, for Session anyway)
             //http.disconnect();
@@ -550,19 +542,19 @@ public class Session extends AbstractBean {
         } finally {
         }
     }
-    
+
     /**
      * This method exists for the sake of testing. I can create a url while testing
      * even without having internet access by overriding this method to return
      * an HttpURLConnection subclass that doesn't actually connect to the
      * internet. I can then fake out all the operations of the URL connection.
-     * 
+     *
      * This method is not to be overridden by any classes other than the
      * test class.
-     * 
+     *
      * @param conn
      * @return
-     * @throws java.io.IOException
+     * @throws IOException
      */
     protected URL createURL(String surl) throws MalformedURLException {
         return new URL(surl.toString());

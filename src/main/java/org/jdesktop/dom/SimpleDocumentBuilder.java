@@ -21,15 +21,6 @@
 
 package org.jdesktop.dom;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.validation.Schema;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
@@ -37,8 +28,18 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.validation.Schema;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
 /**
- * <p>A DOM {@link javax.xml.parsers.DocumentBuilder} implementation that does
+ * <p>A DOM {@link DocumentBuilder} implementation that does
  * not require the factory pattern for creation. Most of the time calling one of
  * the static <code>simpleParse</code> methods is all that is required. Occasionally
  * you may need to create an instance of SimpleDocumentBuilder to tweak some of the

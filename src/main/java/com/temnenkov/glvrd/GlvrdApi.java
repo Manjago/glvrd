@@ -1,20 +1,25 @@
 package com.temnenkov.glvrd;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class GlvrdApi {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlvrdApi.class);
+
     private final ScriptEngine engine = new ScriptEngineManager().getEngineByName("javascript");
     private boolean inited;
+
+    private JsScriptProvider jsScriptProvider;
 
     public GlvrdApi init() {
 
@@ -24,7 +29,7 @@ public class GlvrdApi {
 
         try {
 
-            String scriptContent = getScriptContent();
+            String scriptContent = jsScriptProvider.getScript();
 
             engine.eval("var window = new Object()");
 
@@ -44,8 +49,8 @@ public class GlvrdApi {
 
 
         try {
-            jdk.nashorn.api.scripting.ScriptObjectMirror window = (ScriptObjectMirror) engine.get("window");
-            jdk.nashorn.api.scripting.ScriptObjectMirror glvrd = (ScriptObjectMirror) window.get("glvrd");
+            ScriptObjectMirror window = (ScriptObjectMirror) engine.get("window");
+            ScriptObjectMirror glvrd = (ScriptObjectMirror) window.get("glvrd");
 
             Invocable inv = (Invocable) engine;
             inv.invokeMethod(glvrd, "getStatus", (Consumer<ScriptObjectMirror>) s -> callback.accept("ok".equalsIgnoreCase(String.valueOf(s.get("status")))));
@@ -62,8 +67,8 @@ public class GlvrdApi {
 
 
         try {
-            jdk.nashorn.api.scripting.ScriptObjectMirror window = (ScriptObjectMirror) engine.get("window");
-            jdk.nashorn.api.scripting.ScriptObjectMirror glvrd = (ScriptObjectMirror) window.get("glvrd");
+            ScriptObjectMirror window = (ScriptObjectMirror) engine.get("window");
+            ScriptObjectMirror glvrd = (ScriptObjectMirror) window.get("glvrd");
 
             Invocable inv = (Invocable) engine;
             inv.invokeMethod(glvrd, "proofread", text, (Consumer<ScriptObjectMirror>) s -> {
@@ -116,14 +121,10 @@ public class GlvrdApi {
 
     }
 
-    private String getScriptContent() {
-
-        try {
-            URL url = new URL("https://api.glvrd.ru/v1/glvrd.js");
-            return IOUtils.readFullyAsString(url.openStream(), "UTF-8");
-        } catch (IOException e) {
-            throw new GlvrdException(e);
-        }
+    @Required
+    public void setJsScriptProvider(JsScriptProvider jsScriptProvider) {
+        this.jsScriptProvider = jsScriptProvider;
     }
+
 
 }

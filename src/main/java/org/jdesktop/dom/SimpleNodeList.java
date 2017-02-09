@@ -21,13 +21,14 @@
 
 package org.jdesktop.dom;
 
-import java.util.Iterator;
-import java.util.List;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
- * <p>An implementation of {@link org.w3c.dom.NodeList} which also implements
+ * <p>An implementation of {@link NodeList} which also implements
  * {@link Iterable}. This allows you to use a SimpleNodeList in an enhanced
  * for loop, such as:
  * <pre><code>

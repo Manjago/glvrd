@@ -1,8 +1,5 @@
-package com.temnenkov.glvrdbot;
+package com.temnenkov.glvrd;
 
-import com.temnenkov.glvrd.Fragment;
-import com.temnenkov.glvrd.Hint;
-import com.temnenkov.glvrd.ProofreadResponse;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,7 +16,9 @@ public class GlvrdResponseHandlerTest {
     @Before
     public void setUp() throws Exception {
         h = new GlvrdResponseHandler();
-
+        h.setDeclension(new Declension());
+        h.setInfo(Declension.DeclensionInfo.create());
+        h.setStatCalcer(new StatCalcer());
     }
 
     @Test

@@ -21,18 +21,15 @@
 
 package org.jdesktop.http;
 
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.swing.JOptionPane;
 
 /**
  * <p>
@@ -62,21 +59,21 @@ class HighSecurityX509TrustManager implements X509TrustManager {
     }
 
     /**
-     * @see javax.net.ssl.X509TrustManager#checkClientTrusted(X509Certificate[],String authType)
+     * @see X509TrustManager#checkClientTrusted(X509Certificate[],String authType)
      */
     public void checkClientTrusted(X509Certificate[] certificates,String authType) throws CertificateException {
         standardTrustManager.checkClientTrusted(certificates,authType);
     }
 
     /**
-     * @see javax.net.ssl.X509TrustManager#checkServerTrusted(X509Certificate[],String authType)
+     * @see X509TrustManager#checkServerTrusted(X509Certificate[],String authType)
      */
     public void checkServerTrusted(X509Certificate[] certificates,String authType) throws CertificateException {
         standardTrustManager.checkServerTrusted(certificates,authType);
     }
 
     /**
-     * @see javax.net.ssl.X509TrustManager#getAcceptedIssuers()
+     * @see X509TrustManager#getAcceptedIssuers()
      */
     public X509Certificate[] getAcceptedIssuers() {
         return this.standardTrustManager.getAcceptedIssuers();

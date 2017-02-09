@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <!-- common -->
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:development.properties"/>
+        <property name="systemPropertiesMode" value="2"/>
+    </bean>
+
+    <!-- integration schema -->
+
+    <int:inbound-channel-adapter channel="inTgMessages"
+                                 ref="telegramInboundChannelAdapter" method="fetchUpdates">
+        <int:poller fixed-delay="1000"/>
+    </int:inbound-channel-adapter>
+
+    <int:channel id="inTgMessages" datatype="com.temnenkov.tgibot.tgbot.UpdatePack">
+        <int:queue message-store="messageStore"/>
+    </int:channel>
+
+    <int:splitter ref="updatePackSplitter" method="split" input-channel="inTgMessages" output-channel="inUpdates">
+        <int:poller fixed-delay="100"/>
+    </int:splitter>
+
+    <int:channel id="inUpdates" datatype="com.temnenkov.tgibot.tgapi.dto.Update">
+        <int:queue message-store="messageStore"/>
+        <int:interceptors>
+            <ref bean="statInterceptor"/>
+        </int:interceptors>
+    </int:channel>
+
+    <int:chain input-channel="inUpdates" output-channel="outMessages">
+        <int:filter ref="updateCleaner" method="accept"/>
+        <int:service-activator ref="telegramMessagesHandler" method="handleUpdates"/>
+        <int:poller fixed-delay="10"/>
+    </int:chain>
+
+    <int:channel id="outMessages" datatype="com.temnenkov.tgibot.tgapi.method.SendMessage">
+        <int:queue message-store="messageStore"/>
+        <int:interceptors>
+            <ref bean="statInterceptor"/>
+        </int:interceptors>
+    </int:channel>
+
+    <int:header-enricher input-channel="outMessages" output-channel="smoothOutMessages">
+        <int:header name="delay" ref="smoother" method="makeDelay"/>
+        <int:poller fixed-delay="10"/>
+    </int:header-enricher>
+
+    <int:channel id="smoothOutMessages" datatype="com.temnenkov.tgibot.tgapi.method.SendMessage">
+        <int:queue message-store="messageStore"/>
+    </int:channel>
+
+    <int:delayer id="delayer" input-channel="smoothOutMessages" output-channel="delayedOutMessages"
+                 default-delay="0" expression="headers['delay']">
+        <int:poller fixed-delay="10"/>
+    </int:delayer>
+
+    <int:channel id="delayedOutMessages" datatype="com.temnenkov.tgibot.tgapi.method.SendMessage">
+        <int:queue message-store="messageStore"/>
+    </int:channel>
+
+    <int:outbound-channel-adapter channel="delayedOutMessages" ref="telegramOutboundChannelAdapter"
+                                  method="sendMessage">
+        <int:poller fixed-delay="34"/>
+    </int:outbound-channel-adapter>
+
+    <!-- integration implementation -->
+
+    <bean id="telegramInboundChannelAdapter" class="com.temnenkov.tgibot.tgbot.TelegramInboundChannelAdapter">
+        <property name="httpSender" ref="httpSender"/>
+    </bean>
+
+    <bean id="telegramMessagesHandler" class="com.temnenkov.tgibot.tgbot.TelegramMessagesHandler">
+        <property name="glvrdResponseHandler" ref="glvrdResponseHandler"/>
+        <property name="outMessages" ref="outMessages"/>
+        <property name="telegramCommander" ref="telegramCommander"/>
+    </bean>
+
+    <bean id="telegramCommander" class="com.temnenkov.tgibot.tgbot.TelegramCommander"/>
+
+    <bean id="updatePackSplitter" class="com.temnenkov.tgibot.tgbot.UpdatePackSplitter"/>
+
+    <bean id="updateCleaner" class="com.temnenkov.tgibot.tgbot.UpdateCleaner"/>
+
+    <bean id="telegramOutboundChannelAdapter" class="com.temnenkov.tgibot.tgbot.TelegramOutboundChannelAdapter">
+        <property name="httpSender" ref="httpSender"/>
+    </bean>
+
+    <bean id="smoother" class="com.temnenkov.tgibot.tgbot.DelayHeaderEnricher">
+        <property name="sendStat" ref="sendStat"/>
+    </bean>
+
+    <bean id="jsScriptProvider" class="com.temnenkov.glvrd.JsScriptProvider">
+        <property name="downloadJsScript" ref="downloadJsScript"/>
+    </bean>
+
+    <bean id="statInterceptor" class="com.temnenkov.tgibot.tgbot.StatInterceptor">
+        <property name="jdbcStatStore" ref="jdbcStatStore"/>
+    </bean>
+
+    <!-- db -->
+
+    <bean id="messageStore" class="org.springframework.integration.jdbc.JdbcMessageStore">
+        <property name="dataSource" ref="queueDataSource"/>
+    </bean>
+
+    <bean class="com.temnenkov.tgibot.tgbot.DatabaseIniter">
+        <property name="dataSource" ref="queueDataSource"/>
+    </bean>
+
+    <bean id="queueDataSource" class="org.h2.jdbcx.JdbcConnectionPool" factory-method="create">
+        <constructor-arg type="java.lang.String" value="${db.url}"/>
+        <constructor-arg type="java.lang.String" value="${db.username}"/>
+        <constructor-arg type="java.lang.String" value="${db.password}"/>
+    </bean>
+
+    <bean id="jdbcStatStore" class="com.temnenkov.statstore.JdbcStatStore" init-method="postConstruct">
+        <property name="dataSource" ref="queueDataSource"/>
+    </bean>
+
+    <!-- HTTP -->
+    <bean id="baseHttpSender" class="com.temnenkov.tgibot.http.BaseHttpSender" abstract="true">
+        <property name="proxy" value="${bot.proxy}"/>
+        <property name="port" value="${bot.port}"/>
+        <property name="debugSSL" value="${bot.debugSSL}"/>
+    </bean>
+
+    <bean id="httpSender" class="com.temnenkov.tgibot.http.TelegramHttpSender" parent="baseHttpSender"
+          init-method="initMethod" destroy-method="destroyMethod">
+        <property name="botToken" value="${bot.token}"/>
+    </bean>
+
+    <!-- throttle-->
+    <bean id="sendStat" class="com.temnenkov.tgibot.tgbot.SendStat"/>
+
+    <!-- glvrd -->
+    <task:scheduled-tasks scheduler="getJsScriptScheduler">
+        <task:scheduled ref="jsScriptProvider" method="updateScript" fixed-delay="3600000" initial-delay="0"/>
+    </task:scheduled-tasks>
+
+    <task:scheduler id="getJsScriptScheduler" pool-size="1"/>
+
+    <bean class="com.temnenkov.glvrd.GlvrdApi" scope="prototype">
+        <property name="jsScriptProvider" ref="jsScriptProvider"/>
+    </bean>
+
+    <bean id="glvrdResponseHandler" class="com.temnenkov.glvrd.GlvrdResponseHandler">
+        <property name="statCalcer" ref="statCalcer"/>
+        <property name="declension" ref="declension"/>
+        <property name="info" ref="declensionInfo"/>
+    </bean>
+
+    <bean id="statCalcer" class="com.temnenkov.glvrd.StatCalcer"/>
+
+    <bean id="declension" class="com.temnenkov.glvrd.Declension"/>
+
+    <bean id="declensionInfo" class="com.temnenkov.glvrd.Declension$DeclensionInfo" factory-method="create"/>
+    <bean id="downloadJsScript" class="com.temnenkov.glvrd.DownloadJsScript" parent="baseHttpSender"
+          init-method="initMethod" destroy-method="destroyMethod"/>
+
+</beans>

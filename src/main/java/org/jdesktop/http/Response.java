@@ -21,11 +21,7 @@
 
 package org.jdesktop.http;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;

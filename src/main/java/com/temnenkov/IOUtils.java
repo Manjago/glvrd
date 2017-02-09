@@ -1,4 +1,4 @@
-package com.temnenkov.glvrd;
+package com.temnenkov;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

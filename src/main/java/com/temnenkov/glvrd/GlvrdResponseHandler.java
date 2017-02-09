@@ -1,10 +1,7 @@
-package com.temnenkov.glvrdbot;
+package com.temnenkov.glvrd;
 
-import com.temnenkov.glvrd.Declension;
-import com.temnenkov.glvrd.Fragment;
-import com.temnenkov.glvrd.ProofreadResponse;
-import com.temnenkov.glvrd.StatCalcer;
 import org.jsoup.parser.Parser;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -15,9 +12,9 @@ import java.util.List;
 
 public class GlvrdResponseHandler {
 
-    private final StatCalcer statCalcer = new StatCalcer();
-    private final Declension declension = new Declension();
-    private final Declension.DeclensionInfo info = new Declension.DeclensionInfo("замечание", "замечания", "замечаний");
+    private StatCalcer statCalcer;
+    private Declension declension;
+    private Declension.DeclensionInfo info;
 
     public String handle(String text, ProofreadResponse resp) {
 
@@ -90,4 +87,21 @@ public class GlvrdResponseHandler {
         }
         return Parser.unescapeEntities(s.substring(0, 1).toLowerCase() + s.substring(1), false);
     }
+
+    @Required
+    public void setStatCalcer(StatCalcer statCalcer) {
+        this.statCalcer = statCalcer;
+    }
+
+    @Required
+    public void setDeclension(Declension declension) {
+        this.declension = declension;
+    }
+
+    @Required
+    public void setInfo(Declension.DeclensionInfo info) {
+        this.info = info;
+    }
+
+
 }

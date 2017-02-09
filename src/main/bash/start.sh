@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 #JAVA_HOME="/opt/jdk1.8.0_121"
 
@@ -13,7 +13,7 @@ if [ -n "$PID" ]
    exit
 fi
 
-LOGDIR="glvrdlogs"
+LOGDIR="logs"
 
-nohup $JAVA_HOME/bin/java -jar glvrd-${project.version}.jar glvrd.config 1>$LOGDIR/out 2>$LOGDIR/err & echo $!>PID;
+nohup $JAVA_HOME/bin/java -Xmx100m -Dlogback.configurationFile=logback.xml -jar glvrd-${project.version}.jar -config production.config 1>$LOGDIR/out 2>$LOGDIR/err & echo $!>PID;
 

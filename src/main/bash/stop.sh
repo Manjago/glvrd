@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 if [ -e "PID" ]
  then
   PID=`cat PID`

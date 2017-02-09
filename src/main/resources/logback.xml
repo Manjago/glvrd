@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--suppress XmlUnboundNsPrefix -->
-<configuration debug="true" scan="true">
+<configuration>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d %p [%c] - %m%n</pattern>
+        </encoder>
+    </appender>
 
     <appender name="Default" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <encoder>
@@ -11,7 +16,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <maxHistory>30</maxHistory>
             <fileNamePattern>
-                /home/proxy/glvrdlogs/glvrd.%d{yyyy-MM-dd}.%i.log.gz
+                logs/glvrd.%d{yyyy-MM-dd}.%i.log.gz
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10MB</maxFileSize>
@@ -19,9 +24,14 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="org.apache.http" level="INFO"/>
-
     <root level="DEBUG">
-        <appender-ref ref="Default"/>
+        <appender-ref ref="Default" />
+        <appender-ref ref="stdout" />
     </root>
+
+    <logger name="org.apache.http" level="WARN"/>
+    <logger name="org.springframework.jdbc" level="WARN"/>
+    <logger name="org.springframework.beans" level="INFO"/>
+    <logger name="org.springframework.integration.endpoint.PollingConsumer" level="INFO"/>
+
 </configuration>

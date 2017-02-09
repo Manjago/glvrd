@@ -21,6 +21,7 @@
             <directory>${basedir}/src/main/config</directory>
             <includes>
                 <include>**/*.config</include>
+				<include>**/*.xml</include>
             </includes>
             <outputDirectory>/</outputDirectory>
         </fileSet>
