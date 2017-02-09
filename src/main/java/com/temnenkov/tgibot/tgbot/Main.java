@@ -29,6 +29,7 @@ public final class Main {
         } catch (ParameterException e) {
             LOGGER.warn("bad parameters", e);
             new JCommander(pars).usage();
+            return;
         } catch (Exception e) {
             LOGGER.error("fail", e);
         }
