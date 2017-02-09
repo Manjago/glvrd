@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+@SuppressWarnings("squid:S1068")
 @Data
 public class MessageEntity implements Serializable {
     /**

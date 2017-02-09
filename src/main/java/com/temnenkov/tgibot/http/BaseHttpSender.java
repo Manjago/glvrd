@@ -54,6 +54,7 @@ public abstract class BaseHttpSender {
         if (debugSSL){
             TrustManager[] trustAllCerts = new TrustManager[]{
                     new X509TrustManager() {
+                        @SuppressWarnings("squid:S1168")
                         @Override
                         public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                             return null;
@@ -61,10 +62,12 @@ public abstract class BaseHttpSender {
                         @Override
                         public void checkClientTrusted(
                                 java.security.cert.X509Certificate[] certs, String authType) {
+                            // dummy
                         }
                         @Override
                         public void checkServerTrusted(
                                 java.security.cert.X509Certificate[] certs, String authType) {
+                            // dummy
                         }
                     }
             };

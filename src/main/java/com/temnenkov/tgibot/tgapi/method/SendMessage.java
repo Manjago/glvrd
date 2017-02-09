@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+@SuppressWarnings("squid:S1068")
 @Data
 @Builder
 public class SendMessage implements Serializable{

@@ -2,6 +2,7 @@ package com.temnenkov.tgibot.tgapi.method;
 
 import lombok.Data;
 
+@SuppressWarnings("squid:S1068")
 @Data
 public class GetUpdates {
     /**

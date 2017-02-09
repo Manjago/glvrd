@@ -8,6 +8,7 @@ import java.io.Serializable;
 /**
  * This object represents one button of an inline keyboard. You must use exactly one of the optional fields.
  */
+@SuppressWarnings("squid:S1068")
 @Data
 public class InlineKeyboardButton implements Serializable {
     /**
