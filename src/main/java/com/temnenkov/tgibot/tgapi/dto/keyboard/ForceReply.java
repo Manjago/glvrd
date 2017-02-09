@@ -12,6 +12,7 @@ public class ForceReply implements ReplyMarkup, Serializable {
      * Shows reply interface to the user, as if they manually selected the bot‘s message and tapped ’Reply'
      */
     @SerializedName("force_reply")
+    @SuppressWarnings("squid:S1700")
     private Boolean forceReply;
     /**
      * Optional.

@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
+@SuppressWarnings("squid:S1068")
 public class UpdatePack implements Serializable {
     private static final long serialVersionUID = 4260795502416364302L;
     private final Update[] updates;

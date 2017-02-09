@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 @Data
 @Builder
+@SuppressWarnings("squid:S1068")
 public class KeyboardButton implements Serializable{
     private String text;
     @SerializedName("request_contact")
