@@ -10,13 +10,21 @@ public class Declension {
              throw new IllegalArgumentException();
          }
 
-         if (value == 1) {
+         if (value < 0) {
+             return decline(-value, info);
+         } else if (value == 1) {
              return info.one;
          } else if (value >= 2 && value <= 4) {
              return info.two;
+         } else if (value >= 5 && value <= 20) {
+             return  info.five;
+         } else if (value >= 21 && value <= 100) {
+             return decline(value % 10, info);
+         } else if (value >= 100) {
+             return decline(value % 100, info);
          }
 
-         return  info.five;
+         return info.five;
 
     }
 

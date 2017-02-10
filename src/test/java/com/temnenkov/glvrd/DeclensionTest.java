@@ -84,6 +84,51 @@ public class DeclensionTest {
     }
 
     @Test
+    public void decline20() throws Exception {
+        assertEquals("замечаний", declension.decline(20, info));
+    }
+
+    @Test
+    public void decline21() throws Exception {
+        assertEquals("замечание", declension.decline(21, info));
+    }
+
+    @Test
+    public void decline22() throws Exception {
+        assertEquals("замечания", declension.decline(22, info));
+    }
+
+    @Test
+    public void decline25() throws Exception {
+        assertEquals("замечаний", declension.decline(25, info));
+    }
+
+    @Test
+    public void decline121() throws Exception {
+        assertEquals("замечание", declension.decline(121, info));
+    }
+
+    @Test
+    public void decline122() throws Exception {
+        assertEquals("замечания", declension.decline(122, info));
+    }
+
+    @Test
+    public void decline11m() throws Exception {
+        assertEquals("замечаний", declension.decline(-11, info));
+    }
+
+    @Test
+    public void decline121m() throws Exception {
+        assertEquals("замечание", declension.decline(-121, info));
+    }
+
+    @Test
+    public void decline122m() throws Exception {
+        assertEquals("замечания", declension.decline(-122, info));
+    }
+
+    @Test
     public void decline0() throws Exception {
         assertEquals("замечаний", declension.decline(0, info));
     }
