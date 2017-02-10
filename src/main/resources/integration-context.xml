@@ -90,6 +90,7 @@
 
     <bean id="telegramOutboundChannelAdapter" class="com.temnenkov.tgibot.tgbot.TelegramOutboundChannelAdapter">
         <property name="httpSender" ref="httpSender"/>
+        <property name="outMessages" ref="outMessages"/>
     </bean>
 
     <bean id="smoother" class="com.temnenkov.tgibot.tgbot.DelayHeaderEnricher">
