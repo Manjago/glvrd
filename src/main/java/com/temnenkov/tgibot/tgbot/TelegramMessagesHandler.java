@@ -1,5 +1,6 @@
 package com.temnenkov.tgibot.tgbot;
 
+import com.beust.jcommander.internal.Lists;
 import com.temnenkov.glvrd.GlvrdApi;
 import com.temnenkov.glvrd.GlvrdResponseHandler;
 import com.temnenkov.glvrd.ProofreadResponse;
@@ -16,6 +17,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class TelegramMessagesHandler implements BeanFactoryAware {
@@ -36,9 +38,9 @@ public class TelegramMessagesHandler implements BeanFactoryAware {
         final String text = update.getMessage().getText();
 
 
-        if (update.getMessage().isCommand()){
+        if (update.getMessage().isCommand()) {
             LOGGER.debug("got command {} from {}", text, update);
-           return MessageBuilder.withPayload(telegramCommander.handleUpdates(update)).build();
+            return MessageBuilder.withPayload(telegramCommander.handleUpdates(update)).build();
         }
 
 
@@ -94,7 +96,13 @@ public class TelegramMessagesHandler implements BeanFactoryAware {
         this.outMessages = outMessages;
     }
 
+    @Required
+    public void setTelegramCommander(TelegramCommander telegramCommander) {
+        this.telegramCommander = telegramCommander;
+    }
+
     private class HandleUpdate implements Consumer<ProofreadResponse> {
+        private static final int MAX_MESSAGE_SIZE = 4096;
         private final Update update;
         private final String text;
 
@@ -107,19 +115,38 @@ public class TelegramMessagesHandler implements BeanFactoryAware {
         public void accept(ProofreadResponse proofreadResponse) {
             LOGGER.debug("proofreadResponse {} for {}", proofreadResponse, update);
 
-            SendMessage message = SendMessage.builder()
-                    .chatId(update.getMessage().getChat().getId())
-                    .text(glvrdResponseHandler.handle(text, proofreadResponse))
-                    .parseMode("HTML").build();
-                sendMessage(message); // Call method to send the message
+
+            final String modifiedText = glvrdResponseHandler.handle(text, proofreadResponse);
+            if (modifiedText.length() <= MAX_MESSAGE_SIZE) {
+                SendMessage message = SendMessage.builder()
+                        .chatId(update.getMessage().getChat().getId())
+                        .text(modifiedText)
+                        .parseMode("HTML").build();
+                sendMessage(message);
+            } else {
+                List<String> result = splitInChunks(modifiedText, MAX_MESSAGE_SIZE);
+                for (String s : result) {
+                    SendMessage message = SendMessage.builder()
+                            .chatId(update.getMessage().getChat().getId())
+                            .text(s)
+                            .parseMode("HTML").build();
+                    sendMessage(message);
+                }
+
+            }
 
 
         }
-    }
 
-    @Required
-    public void setTelegramCommander(TelegramCommander telegramCommander) {
-        this.telegramCommander = telegramCommander;
+
+        private List<String> splitInChunks(String s, int chunkSize) {
+            List<String> result = Lists.newArrayList();
+            int length = s.length();
+            for (int i = 0; i < length; i += chunkSize) {
+                result.add(s.substring(i, Math.min(length, i + chunkSize)));
+            }
+            return result;
+        }
     }
 
 }
