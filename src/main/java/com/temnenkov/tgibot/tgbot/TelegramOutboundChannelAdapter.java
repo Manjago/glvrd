@@ -25,7 +25,7 @@ import java.text.MessageFormat;
 
 public class TelegramOutboundChannelAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(TelegramOutboundChannelAdapter.class);
-    private final Gson gson = new GsonBuilder().create();
+    private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
     private TelegramHttpSender httpSender;
 
     private MessageChannel outMessages;
