@@ -51,7 +51,7 @@ public class TelegramOutboundChannelAdapter {
 
             JsonObject jsonObject = gson.fromJson(responseContent, JsonObject.class);
             if (!jsonObject.get("ok").getAsBoolean()) {
-                LOGGER.error("Error sending request = {}, response = {}, responseContent", request, response, responseContent);
+                LOGGER.error("Error sending request = {}, response = {}, responseContent = {}", request, response, responseContent);
                 sendErrorMessage(message, responseContent);
             }
 
