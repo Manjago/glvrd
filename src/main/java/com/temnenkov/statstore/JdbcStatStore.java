@@ -25,7 +25,7 @@ public class JdbcStatStore implements StatStore {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcStatStore.class);
 
-    private final Gson gson = new GsonBuilder().create();
+    private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
     private volatile JdbcOperations jdbcTemplate;
     private DataSource dataSource;
 

@@ -25,7 +25,7 @@ import java.util.Optional;
 public class TelegramInboundChannelAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TelegramInboundChannelAdapter.class);
-    private final Gson gson = new GsonBuilder().create();
+    private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
     private TelegramHttpSender httpSender;
     private long lastReceivedUpdate = 0;
 
