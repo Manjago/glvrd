@@ -1,9 +1,9 @@
 package com.temnenkov.tgibot.tgbot;
 
-import com.beust.jcommander.internal.Lists;
 import com.temnenkov.glvrd.GlvrdApi;
 import com.temnenkov.glvrd.GlvrdResponseHandler;
 import com.temnenkov.glvrd.ProofreadResponse;
+import com.temnenkov.glvrd.TextSplitter;
 import com.temnenkov.tgibot.tgapi.dto.Update;
 import com.temnenkov.tgibot.tgapi.method.SendMessage;
 import org.slf4j.Logger;
@@ -31,6 +31,8 @@ public class TelegramMessagesHandler implements BeanFactoryAware {
     private MessageChannel outMessages;
 
     private TelegramCommander telegramCommander;
+
+    private TextSplitter textSplitter;
 
     public Message<SendMessage> handleUpdates(Message<Update> updateMsg) {
 
@@ -124,7 +126,7 @@ public class TelegramMessagesHandler implements BeanFactoryAware {
                         .parseMode("HTML").build();
                 sendMessage(message);
             } else {
-                List<String> result = splitInChunks(modifiedText, MAX_MESSAGE_SIZE);
+                List<String> result = textSplitter.splitInChunks(modifiedText, MAX_MESSAGE_SIZE);
                 for (String s : result) {
                     SendMessage message = SendMessage.builder()
                             .chatId(update.getMessage().getChat().getId())
@@ -138,15 +140,12 @@ public class TelegramMessagesHandler implements BeanFactoryAware {
 
         }
 
-
-        private List<String> splitInChunks(String s, int chunkSize) {
-            List<String> result = Lists.newArrayList();
-            int length = s.length();
-            for (int i = 0; i < length; i += chunkSize) {
-                result.add(s.substring(i, Math.min(length, i + chunkSize)));
-            }
-            return result;
-        }
     }
+
+    @Required
+    public void setTextSplitter(TextSplitter textSplitter) {
+        this.textSplitter = textSplitter;
+    }
+
 
 }

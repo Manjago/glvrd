@@ -73,6 +73,7 @@
         <property name="glvrdResponseHandler" ref="glvrdResponseHandler"/>
         <property name="outMessages" ref="outMessages"/>
         <property name="telegramCommander" ref="telegramCommander"/>
+        <property name="textSplitter" ref="textSplitter"/>
     </bean>
 
     <bean id="telegramCommander" class="com.temnenkov.tgibot.tgbot.TelegramCommander"/>
@@ -147,6 +148,8 @@
     </bean>
 
     <bean id="statCalcer" class="com.temnenkov.glvrd.StatCalcer"/>
+
+    <bean id="textSplitter" class="com.temnenkov.glvrd.TextSplitter"/>
 
     <bean id="declension" class="com.temnenkov.glvrd.Declension"/>
 
