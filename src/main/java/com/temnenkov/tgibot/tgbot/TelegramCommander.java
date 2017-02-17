@@ -16,6 +16,8 @@ public class TelegramCommander {
                 return startCommand(update);
             case "/help":
                 return helpCommand(update);
+            case "/rate":
+                return rateCommand(update);
             default:
                 return unknownCommand(update);
 
@@ -33,6 +35,17 @@ public class TelegramCommander {
                 .text(sb.toString()).build();
     }
 
+    private SendMessage rateCommand(Update update) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Если понравился бот или хочется улучшений - <a href=\"https://telegram.me/storebot?start=glvrd2bot\">оставьте отзыв здесь</a> (перейдите по ссылке, нажмите start)");
+
+        return SendMessage.builder()
+                .chatId(update.getMessage().getChat().getId())
+                .text(sb.toString())
+                .parseMode("HTML")
+                .build();
+    }
+
     private SendMessage helpCommand(Update update) {
 
         return SendMessage.builder()
@@ -48,7 +61,8 @@ public class TelegramCommander {
         sb.append("Просто пошли мне текст для проверки.\n\n");
         sb.append("Список доступных для меня команд:\n");
         sb.append("/start - самая первая команда.\n");
-        sb.append("/help - краткая справка.");
+        sb.append("/help - краткая справка.\n");
+        sb.append("/rate - оценить бота.");
         return sb.toString();
     }
 
