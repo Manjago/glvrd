@@ -10,6 +10,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public final class Main {
@@ -45,7 +46,7 @@ public final class Main {
 
     }
 
-    private void process(AppParams appParams) {
+    private void process(AppParams appParams) throws IOException, SQLException {
 
         try {
             updateSystemProperties(appParams.getConfig());
@@ -54,9 +55,19 @@ public final class Main {
             return;
         }
 
-        ConfigurableApplicationContext applicationContext = new ClassPathXmlApplicationContext("integration-context.xml");
+        dbInit();
+
+        ConfigurableApplicationContext applicationContext = new ClassPathXmlApplicationContext("integration-context-core.xml", "integration-context.xml");
         applicationContext.registerShutdownHook();
         LOGGER.info("Started");
+    }
+
+    private void dbInit() throws IOException, SQLException {
+        ConfigurableApplicationContext applicationContext = new ClassPathXmlApplicationContext("integration-context-prestart.xml", "integration-context-core.xml");
+        DatabaseIniter databaseIniter = applicationContext.getBean(DatabaseIniter.class);
+        databaseIniter.setUp();
+
+        applicationContext.close();
     }
 
     private void updateSystemProperties(String filepath) throws IOException {

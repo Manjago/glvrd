@@ -3,8 +3,6 @@ package com.temnenkov.tgibot.tgbot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -12,21 +10,11 @@ import java.sql.*;
 
 import static com.temnenkov.IOUtils.readFullyAsString;
 
-public class DatabaseIniter implements ApplicationListener<ContextRefreshedEvent> {
+public class DatabaseIniter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseIniter.class);
 
     private DataSource dataSource;
-
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        try {
-            setUp();
-        } catch (SQLException | IOException e) {
-            LOGGER.error("fail create queue database", e);
-        }
-
-    }
 
     @Required
     public void setDataSource(DataSource dataSource) {
@@ -34,7 +22,7 @@ public class DatabaseIniter implements ApplicationListener<ContextRefreshedEvent
     }
 
 
-    private void setUp() throws SQLException, IOException {
+    public void setUp() throws SQLException, IOException {
 
         try (Connection conn = dataSource.getConnection()) {
             if (isNeedDbCreate(conn, "INT_MESSAGE")) {

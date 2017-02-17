@@ -5,13 +5,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
-    <!-- common -->
-
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="classpath:development.properties"/>
-        <property name="systemPropertiesMode" value="2"/>
-    </bean>
-
     <!-- integration schema -->
 
     <int:inbound-channel-adapter channel="inTgMessages"
@@ -111,18 +104,14 @@
         <property name="dataSource" ref="queueDataSource"/>
     </bean>
 
-    <bean class="com.temnenkov.tgibot.tgbot.DatabaseIniter">
-        <property name="dataSource" ref="queueDataSource"/>
-    </bean>
-
-    <bean id="queueDataSource" class="org.h2.jdbcx.JdbcConnectionPool" factory-method="create">
-        <constructor-arg type="java.lang.String" value="${db.url}"/>
-        <constructor-arg type="java.lang.String" value="${db.username}"/>
-        <constructor-arg type="java.lang.String" value="${db.password}"/>
-    </bean>
-
     <bean id="jdbcStatStore" class="com.temnenkov.statstore.JdbcStatStore" init-method="postConstruct">
-        <property name="dataSource" ref="queueDataSource"/>
+        <property name="dataSource" ref="statDataSource"/>
+    </bean>
+
+    <bean id="statDataSource" class="org.h2.jdbcx.JdbcConnectionPool" factory-method="create">
+        <constructor-arg type="java.lang.String" value="${dbstat.url}"/>
+        <constructor-arg type="java.lang.String" value="${dbstat.username}"/>
+        <constructor-arg type="java.lang.String" value="${dbstat.password}"/>
     </bean>
 
     <!-- HTTP -->

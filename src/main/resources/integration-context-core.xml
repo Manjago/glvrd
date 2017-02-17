@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:development.properties"/>
+        <property name="systemPropertiesMode" value="2"/>
+    </bean>
+
+    <bean id="queueDataSource" class="org.h2.jdbcx.JdbcConnectionPool" factory-method="create">
+        <constructor-arg type="java.lang.String" value="${db.url}"/>
+        <constructor-arg type="java.lang.String" value="${db.username}"/>
+        <constructor-arg type="java.lang.String" value="${db.password}"/>
+    </bean>
+
+</beans>
