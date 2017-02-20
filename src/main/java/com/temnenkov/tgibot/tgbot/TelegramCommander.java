@@ -37,7 +37,7 @@ public class TelegramCommander {
 
     private SendMessage rateCommand(Update update) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Если понравился бот или хочется улучшений - <a href=\"https://telegram.me/storebot?start=glvrd2bot\">оставьте отзыв здесь</a> (перейдите по ссылке, нажмите start)");
+        sb.append("Если понравился бот или хочется улучшений - <a href=\"https://telegram.me/storebot?start=glvrd2bot\">оставьте отзыв здесь</a>");
 
         return SendMessage.builder()
                 .chatId(update.getMessage().getChat().getId())
