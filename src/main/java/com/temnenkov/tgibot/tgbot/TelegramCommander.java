@@ -51,13 +51,13 @@ public class TelegramCommander {
         return SendMessage.builder()
                 .chatId(update.getMessage().getChat().getId())
                 .text(helpMessage())
-                .parseMode("Markdown")
+                .parseMode("HTML")
                 .build();
     }
 
     private String helpMessage() {
         StringBuilder sb = new StringBuilder();
-        sb.append("*Как мной пользоваться?*\n");
+        sb.append("<b>Как мной пользоваться?</b>\n");
         sb.append("Просто пошли мне текст для проверки.\n\n");
         sb.append("Список доступных для меня команд:\n");
         sb.append("/start - самая первая команда.\n");
