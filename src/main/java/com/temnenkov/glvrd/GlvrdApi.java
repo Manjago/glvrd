@@ -27,6 +27,11 @@ public class GlvrdApi {
         }
 
         String scriptContent = jsScriptProvider.getScript();
+
+        if (scriptContent == null){
+            throw new GlvrdException("acript not loaded");
+        }
+
         try {
 
             engine.eval("var window = new Object()");
@@ -51,7 +56,13 @@ public class GlvrdApi {
             ScriptObjectMirror glvrd = (ScriptObjectMirror) window.get("glvrd");
 
             Invocable inv = (Invocable) engine;
-            inv.invokeMethod(glvrd, "getStatus", (Consumer<ScriptObjectMirror>) s -> callback.accept("ok".equalsIgnoreCase(String.valueOf(s.get("status")))));
+            inv.invokeMethod(glvrd, "getStatus", (Consumer<ScriptObjectMirror>) s -> {
+                final boolean okStatus = "ok".equalsIgnoreCase(String.valueOf(s.get("status")));
+                if (!okStatus){
+                    LOGGER.warn("glavred service unavailable {}", s.entrySet());
+                }
+                callback.accept(okStatus);
+            });
 
         } catch (ScriptException | NoSuchMethodException e) {
             throw new GlvrdException(e);

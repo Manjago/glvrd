@@ -61,7 +61,7 @@ public class TelegramMessagesHandler implements BeanFactoryAware {
             return MessageBuilder.withPayload(
                     SendMessage.builder()
                             .chatId(update.getMessage().getChat().getId())
-                            .text("сервис главреда недоступен, попробуйте повторить запрос через час")
+                            .text("сервис главреда недоступен, попробуйте повторить запрос")
                             .build())
                     .build();
         }
@@ -88,7 +88,7 @@ public class TelegramMessagesHandler implements BeanFactoryAware {
     private void sendErrorMessage(Update update) {
         SendMessage message = SendMessage.builder()
                 .chatId(update.getMessage().getChat().getId())
-                .text("сервис главреда недоступен, попробуйте повторить запрос через час").build();
+                .text("сервис главреда недоступен, попробуйте повторить запрос").build();
         sendMessage(message);
     }
 
