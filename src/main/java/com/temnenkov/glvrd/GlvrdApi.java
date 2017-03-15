@@ -1,6 +1,8 @@
 package com.temnenkov.glvrd;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import javax.script.Invocable;
@@ -12,6 +14,7 @@ import java.util.function.Consumer;
 
 public class GlvrdApi {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlvrdApi.class);
     private final ScriptEngine engine = new ScriptEngineManager().getEngineByName("javascript");
     private boolean inited;
 
@@ -23,9 +26,8 @@ public class GlvrdApi {
             return this;
         }
 
+        String scriptContent = jsScriptProvider.getScript();
         try {
-
-            String scriptContent = jsScriptProvider.getScript();
 
             engine.eval("var window = new Object()");
 
@@ -33,6 +35,7 @@ public class GlvrdApi {
             engine.eval(scriptContent);
             inited = true;
         } catch (ScriptException e) {
+            LOGGER.error("fail exec script {}", scriptContent, e);
             throw new GlvrdException(e);
         }
 
@@ -42,10 +45,8 @@ public class GlvrdApi {
 
     @SuppressWarnings("squid:S1172")
     public void getStatus(Consumer<Boolean> callback) {
-        init();
-
-
         try {
+            init();
             ScriptObjectMirror window = (ScriptObjectMirror) engine.get("window");
             ScriptObjectMirror glvrd = (ScriptObjectMirror) window.get("glvrd");
 
@@ -60,21 +61,16 @@ public class GlvrdApi {
 
     @SuppressWarnings("squid:S1172")
     public void proofread(String text, Consumer<ProofreadResponse> callback) {
-
-        init();
-
-
         try {
+            init();
             ScriptObjectMirror window = (ScriptObjectMirror) engine.get("window");
             ScriptObjectMirror glvrd = (ScriptObjectMirror) window.get("glvrd");
 
             Invocable inv = (Invocable) engine;
             inv.invokeMethod(glvrd, "proofread", text, new ScriptObjectMirrorConsumer(callback));
-
         } catch (ScriptException | NoSuchMethodException e) {
             throw new GlvrdException(e);
         }
-
 
     }
 

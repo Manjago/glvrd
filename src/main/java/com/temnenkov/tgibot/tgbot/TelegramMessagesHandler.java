@@ -1,14 +1,10 @@
 package com.temnenkov.tgibot.tgbot;
 
-import com.temnenkov.glvrd.GlvrdApi;
-import com.temnenkov.glvrd.GlvrdResponseHandler;
-import com.temnenkov.glvrd.ProofreadResponse;
-import com.temnenkov.glvrd.TextSplitter;
+import com.temnenkov.glvrd.*;
 import com.temnenkov.tgibot.tgapi.dto.Update;
 import com.temnenkov.tgibot.tgapi.method.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Required;
@@ -50,18 +46,25 @@ public class TelegramMessagesHandler implements BeanFactoryAware {
 
         final GlvrdApi glvrd = createGlvrdApi();
 
-        glvrd.getStatus(ok -> {
-            LOGGER.debug("Result {}", ok);
-            if (ok) {
-                glvrd.proofread(text, new HandleUpdate(update, text));
-            } else {
+        try{
+            glvrd.getStatus(ok -> {
+                LOGGER.debug("Result {}", ok);
+                if (ok) {
+                    callProofRead(update, text, glvrd);
+                } else {
+                    sendErrorMessage(update);
+                }
+            });
 
-                SendMessage message = SendMessage.builder()
-                        .chatId(update.getMessage().getChat().getId())
-                        .text("сервис главреда недоступен").build();
-                sendMessage(message);
-            }
-        });
+        } catch (GlvrdException ex) {
+            LOGGER.error("fail call getStatus", ex);
+            return MessageBuilder.withPayload(
+                    SendMessage.builder()
+                            .chatId(update.getMessage().getChat().getId())
+                            .text("сервис главреда недоступен, попробуйте повторить запрос через час")
+                            .build())
+                    .build();
+        }
 
 
         return MessageBuilder.withPayload(
@@ -71,6 +74,22 @@ public class TelegramMessagesHandler implements BeanFactoryAware {
                         .build())
                 .build();
 
+    }
+
+    private void callProofRead(Update update, String text, GlvrdApi glvrd) {
+        try {
+            glvrd.proofread(text, new HandleUpdate(update, text));
+        } catch (GlvrdException ex) {
+            LOGGER.error("fail call proofread for update {} and text {}", update, text, ex);
+            sendErrorMessage(update);
+        }
+    }
+
+    private void sendErrorMessage(Update update) {
+        SendMessage message = SendMessage.builder()
+                .chatId(update.getMessage().getChat().getId())
+                .text("сервис главреда недоступен, попробуйте повторить запрос через час").build();
+        sendMessage(message);
     }
 
     private GlvrdApi createGlvrdApi() {
@@ -84,7 +103,7 @@ public class TelegramMessagesHandler implements BeanFactoryAware {
     }
 
     @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    public void setBeanFactory(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 

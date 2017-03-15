@@ -1,9 +1,6 @@
 package com.temnenkov.tgibot.tgbot;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.temnenkov.tgibot.http.TelegramHttpSender;
 import com.temnenkov.tgibot.tgapi.dto.Update;
 import com.temnenkov.tgibot.tgapi.method.GetUpdates;
@@ -70,7 +67,14 @@ public class TelegramInboundChannelAdapter {
     }
 
     private UpdatePack parseUpdates(String json) {
-        JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
+        JsonObject jsonObject;
+        try{
+            jsonObject = gson.fromJson(json, JsonObject.class);
+
+        } catch(JsonSyntaxException e){
+            LOGGER.error("Error parse updates {}", json, e);
+            return null;
+        }
 
         if (!jsonObject.get("ok").getAsBoolean()) {
             LOGGER.error("Error getting updates {}", json);
