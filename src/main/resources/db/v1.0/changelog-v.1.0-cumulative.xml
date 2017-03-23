@@ -3,6 +3,9 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
     <changeSet author="kirill@temnenkov.com (generated)" id="2017-03-23-1">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="STOREDEVENT"/></not>
+        </preConditions>
         <createTable tableName="STOREDEVENT">
             <column name="EVENT_ID" type="VARCHAR(36)">
                 <constraints nullable="false"/>
@@ -20,9 +23,15 @@
         </createTable>
     </changeSet>
     <changeSet author="kirill@temnenkov.com (generated)" id="2017-03-23-2">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="STOREDEVENT"/></not>
+        </preConditions>
         <addPrimaryKey columnNames="EVENT_ID" constraintName="CONSTRAINT_2" tableName="STOREDEVENT"/>
     </changeSet>
     <changeSet author="kirill@temnenkov.com (generated)" id="2017-03-23-3">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="STOREDEVENT"/></not>
+        </preConditions>
         <createIndex indexName="CREATED_INDEX" tableName="STOREDEVENT">
             <column name="CREATED"/>
         </createIndex>
