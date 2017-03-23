@@ -7,4 +7,10 @@
         <property name="dataSource" ref="queueDataSource"/>
     </bean>
 
+
+    <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
+        <property name="dataSource" ref="statDataSource" />
+        <property name="changeLog" value="classpath:changelog.xml" />
+    </bean>
+
 </beans>

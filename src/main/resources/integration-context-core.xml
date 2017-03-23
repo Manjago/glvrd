@@ -14,4 +14,11 @@
         <constructor-arg type="java.lang.String" value="${db.password}"/>
     </bean>
 
+    <bean id="statDataSource" class="org.h2.jdbcx.JdbcConnectionPool" factory-method="create">
+        <constructor-arg type="java.lang.String" value="${dbstat.url}"/>
+        <constructor-arg type="java.lang.String" value="${dbstat.username}"/>
+        <constructor-arg type="java.lang.String" value="${dbstat.password}"/>
+    </bean>
+
+
 </beans>

@@ -280,6 +280,12 @@
             <version>${jcommander.version}</version>
         </dependency>
 
+        <!-- db  -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>3.5.3</version>
+        </dependency>
 
     </dependencies>
 

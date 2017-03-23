@@ -33,6 +33,7 @@ public final class Main {
             return;
         } catch (Exception e) {
             LOGGER.error("fail", e);
+            return;
         }
 
 

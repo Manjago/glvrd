@@ -6,20 +6,14 @@ import com.temnenkov.tgibot.tgapi.dto.Update;
 import com.temnenkov.tgibot.tgapi.method.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
-
-import static com.temnenkov.IOUtils.readFullyAsString;
 
 public class JdbcStatStore implements StatStore {
 
@@ -68,26 +62,6 @@ public class JdbcStatStore implements StatStore {
 
     void postConstruct() {
         jdbcTemplate = new JdbcTemplate(dataSource);
-        try {
-            setUp();
-        } catch (SQLException | IOException e) {
-            throw new BeanInitializationException("fail init statstore", e);
-        }
-    }
-
-    private void setUp() throws SQLException, IOException {
-
-        List<Integer> res= jdbcTemplate.queryForList(Query.IS_NEED_DB_CREATE.getSql(), Integer.class, "STOREDEVENT");
-
-        if (res.isEmpty()) {
-            jdbcTemplate.execute(readFullyAsString(
-                    getClass().getResourceAsStream("/statstore.sql"), "UTF-8"));
-
-            LOGGER.info("create stat database");
-        } else {
-            LOGGER.info("stat database already exists");
-        }
-
     }
 
     @Required
@@ -110,7 +84,6 @@ public class JdbcStatStore implements StatStore {
     }
 
     private enum Query {
-        IS_NEED_DB_CREATE("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = ?"),
         STORE("INSERT into STOREDEVENT " +
                 "(EVENT_ID, CHAT_ID, CREATED, EVENT_BODY, EVENT_TYPE)"
                 + " values (?, ?, ?, ?, ?)");
