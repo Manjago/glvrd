@@ -24,13 +24,13 @@
     </changeSet>
     <changeSet author="kirill@temnenkov.com (generated)" id="2017-03-23-2">
         <preConditions onFail="MARK_RAN">
-            <not><tableExists tableName="STOREDEVENT"/></not>
+            <sqlCheck expectedResult="0">select count(*) from STOREDEVENT</sqlCheck>
         </preConditions>
         <addPrimaryKey columnNames="EVENT_ID" constraintName="CONSTRAINT_2" tableName="STOREDEVENT"/>
     </changeSet>
     <changeSet author="kirill@temnenkov.com (generated)" id="2017-03-23-3">
         <preConditions onFail="MARK_RAN">
-            <not><tableExists tableName="STOREDEVENT"/></not>
+            <sqlCheck expectedResult="0">select count(*) from STOREDEVENT</sqlCheck>
         </preConditions>
         <createIndex indexName="CREATED_INDEX" tableName="STOREDEVENT">
             <column name="CREATED"/>
