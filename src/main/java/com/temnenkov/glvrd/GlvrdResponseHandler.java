@@ -19,7 +19,9 @@ public class GlvrdResponseHandler {
     public String handle(String text, ProofreadResponse resp) {
 
         if (resp.getFragments() == null || resp.getFragments().isEmpty()) {
-            return "Замечаний нет.";
+            return "Замечаний нет." +
+                    "\n\nСтатистика:\n" +
+                    statCalcer.stat(text).info();
         }
 
         StringBuilder sb = new StringBuilder();
