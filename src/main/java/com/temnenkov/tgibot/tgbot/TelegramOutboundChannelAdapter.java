@@ -62,6 +62,11 @@ public class TelegramOutboundChannelAdapter {
 
     private void sendErrorMessage(SendMessage message, String errResponse) {
 
+        if (errResponse != null && errResponse.contains("bot was blocked")) {
+            //blocked? ok
+            return;
+        }
+
         message.setParseMode(null);
         message.setText(MessageFormat.format("Ошибка, сообщите разработчику: {0}", errResponse));
 
