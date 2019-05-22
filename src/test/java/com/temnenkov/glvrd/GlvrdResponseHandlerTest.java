@@ -26,7 +26,10 @@ public class GlvrdResponseHandlerTest {
         final ProofreadResponse resp = new ProofreadResponse();
         String s = h.handle("any", resp);
         System.out.println(s);
-        assertEquals("Замечаний нет.", s);
+        assertEquals("Замечаний нет.\n" +
+                "\n" +
+                "Статистика:\n" +
+                "3 знака (без пробелов), 3 знака (с пробелами)", s);
     }
 
     @Test

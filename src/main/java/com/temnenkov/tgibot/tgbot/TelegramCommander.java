@@ -29,6 +29,7 @@ public class TelegramCommander {
         StringBuilder sb = new StringBuilder();
         sb.append("Привет, я бот, использующий сервис \"Главред\" (https://glvrd.ru/)\n");
         sb.append("Для проверки текста просто пошли мне его.");
+        sb.append("\nПоддержка - https://t.me/glvrd2");
 
         return SendMessage.builder()
                 .chatId(update.getMessage().getChat().getId())

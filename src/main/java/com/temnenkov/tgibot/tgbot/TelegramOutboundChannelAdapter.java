@@ -68,7 +68,7 @@ public class TelegramOutboundChannelAdapter {
         }
 
         message.setParseMode(null);
-        message.setText(MessageFormat.format("Ошибка, сообщите разработчику: {0}", errResponse));
+        message.setText(MessageFormat.format("Ошибка, сообщите разработчику (https://t.me/glvrd2): {0}", errResponse));
 
         MessagingTemplate template = new MessagingTemplate();
         template.send(outMessages, MessageBuilder.withPayload(message).build());
