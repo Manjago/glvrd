@@ -69,18 +69,32 @@ public class GlvrdResponseHandler {
         for (int i = 0; i < workset.size(); ++i) {
             Fragment f = workset.get(i);
             if (f.getStart() > prev){
-                sb.append(text.substring(prev, f.getStart()));
+                sb.append(lameEscape(text.substring(prev, f.getStart())));
             }
             sb.append("<b>");
-            sb.append(text.substring(f.getStart(), f.getEnd()));
+            sb.append(lameEscape(text.substring(f.getStart(), f.getEnd())));
             sb.append("</b>");
             prev = f.getEnd();
         }
         if (text.length() > prev){
-            sb.append(text.substring(prev, text.length()));
+            sb.append(lameEscape(text.substring(prev, text.length())));
         }
 
         return sb.toString();
+    }
+
+    String lameEscape(String s) {
+        if (s == null) {
+            return s;
+        }
+
+        if (!s.contains("<") && !s.contains(">")) {
+            return s;
+        }
+
+        return s
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
     }
 
     String smooth(String s) {

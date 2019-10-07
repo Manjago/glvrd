@@ -152,4 +152,19 @@ public class GlvrdResponseHandlerTest {
         assertEquals("", h.smooth(null));
     }
 
+    @Test
+    public void lameEscape() {
+        assertEquals("&lt;345&gt;", h.lameEscape("<345>"));
+    }
+
+    @Test
+    public void lameEscape2() {
+        assertEquals("345&gt;", h.lameEscape("345>") );
+    }
+
+    @Test
+    public void lameEscape3() {
+        assertEquals("345", h.lameEscape("345") );
+    }
+
 }
