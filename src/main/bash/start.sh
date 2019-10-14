@@ -15,5 +15,5 @@ fi
 
 LOGDIR="logs"
 
-nohup $JAVA_HOME/bin/java -Xmx100m -Dlogback.configurationFile=logback.xml -jar glvrd-${project.version}.jar -config production.config 1>$LOGDIR/out 2>$LOGDIR/err & echo $!>PID;
+nohup $JAVA_HOME/bin/java -Xmx100m -Dlogback.configurationFile=logback.xml -Djava.awt.headless=true -jar glvrd-${project.version}.jar -config production.config 1>$LOGDIR/out 2>$LOGDIR/err & echo $!>PID;
 
