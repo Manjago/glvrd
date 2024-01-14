@@ -6,7 +6,7 @@
 
     <groupId>com.temnenkov.glvrd</groupId>
     <artifactId>glvrd</artifactId>
-    <version>2.5-SNAPSHOT</version>
+    <version>2.5</version>
     <name>Telegram Bot for Glvrd (https://glvrd.ru/)</name>
     <inceptionYear>2017</inceptionYear>
 
