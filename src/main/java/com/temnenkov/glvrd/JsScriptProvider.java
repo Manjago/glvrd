@@ -32,7 +32,7 @@ public class JsScriptProvider {
 
     private String getScriptContent() throws IOException {
 
-        HttpGet request = downloadJsScript.createGet("https://api.glvrd.ru/v3/glvrd.js");
+        HttpGet request = downloadJsScript.createGet("https://api.glvrd.ru/v1/glvrd.js");
 
         String responseContent;
         try (CloseableHttpResponse response = downloadJsScript.getHttpclient().execute(request)) {
