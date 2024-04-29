@@ -3,7 +3,6 @@ package com.temnenkov.tgibot.tgbot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.temnenkov.glvrd.EscapeUtils;
 import com.temnenkov.tgibot.http.TelegramHttpSender;
 import com.temnenkov.tgibot.tgapi.method.SendMessage;
 import com.temnenkov.tgibot.tgapi.method.TelegramMethod;
@@ -23,7 +22,6 @@ import org.springframework.messaging.support.MessageBuilder;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.Objects;
 
 public class TelegramOutboundChannelAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(TelegramOutboundChannelAdapter.class);

@@ -87,7 +87,7 @@ public class TelegramInboundChannelAdapter {
         Optional<Long> maxUpdate = Arrays.stream(updates)
                 .map(Update::getUpdateId)
                 .max(Long::compare);
-        long last = maxUpdate.isPresent() ? maxUpdate.get() : 0L;
+        long last = maxUpdate.orElse(0L);
         LOGGER.debug("last reseived update {}", last);
         return new UpdatePack(updates, last);
     }

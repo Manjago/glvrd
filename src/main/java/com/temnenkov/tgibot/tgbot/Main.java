@@ -10,6 +10,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -72,7 +74,7 @@ public final class Main {
     }
 
     private void updateSystemProperties(String filepath) throws IOException {
-        try (InputStream propFile = new FileInputStream(filepath)) {
+        try (InputStream propFile = Files.newInputStream(Paths.get(filepath))) {
             Properties p =
                     new Properties(System.getProperties());
             p.load(propFile);

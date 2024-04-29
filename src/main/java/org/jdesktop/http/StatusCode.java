@@ -79,10 +79,10 @@ public enum StatusCode {
     HTTP_VERSION_NOT_SUPPORTED(505, "HTTP Version Not Supported"),
     INSUFFICIENT_STORAGE(507, "Insufficient Storage");
     
-    private int code;
-    private String description;
+    private final int code;
+    private final String description;
     
-    private StatusCode(int code, String description) {
+    StatusCode(int code, String description) {
         this.code = code;
         this.description = description;
     }

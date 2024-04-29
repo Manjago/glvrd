@@ -15,7 +15,7 @@ public class TelegramHttpSender extends BaseHttpSender {
 
         String url = "https://api.telegram.org/bot" + botToken + "/" + method;
         HttpPost httpPost = new HttpPost(url);
-        httpPost.addHeader("charset", StandardCharsets.UTF_8.name());
+        httpPost.addHeader("Content-Type", "application/json; charset=utf-8");
         httpPost.setConfig(getRequestConfig());
         httpPost.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 

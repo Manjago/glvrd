@@ -94,7 +94,7 @@ public class JdbcStatStore implements StatStore {
     private enum UpdateType {
         UPDATE(0), SENDMESSAGE(1);
 
-        private int type;
+        private final int type;
 
         UpdateType(int type) {
             this.type = type;

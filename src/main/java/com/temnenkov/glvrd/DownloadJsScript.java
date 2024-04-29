@@ -10,7 +10,7 @@ public class DownloadJsScript extends BaseHttpSender {
     public HttpGet createGet(String url) {
 
         HttpGet httpGet = new HttpGet(url);
-        httpGet.addHeader("charset", StandardCharsets.UTF_8.name());
+        httpGet.addHeader("Content-Type", "application/json; charset=utf-8");
         httpGet.setConfig(getRequestConfig());
 
         return httpGet;

@@ -11,19 +11,14 @@ public class LameHttpRequest extends AsyncHttpRequest {
     public Object onload;
 
     public LameHttpRequest() {
-        addReadyStateChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getNewValue() == ReadyState.LOADED) {
-                    if  (LameHttpRequest.this.onload instanceof ScriptObjectMirror){
+        addReadyStateChangeListener(evt -> {
+            if (evt.getNewValue() == ReadyState.LOADED) {
+                if  (LameHttpRequest.this.onload instanceof ScriptObjectMirror){
 
-                        if (LameHttpRequest.this.onload != null){
-                            ScriptObjectMirror f = (ScriptObjectMirror) LameHttpRequest.this.onload;
-                            f.call(f);
-                            LameHttpRequest.this.onload = null;
-                        }
+                    ScriptObjectMirror f = (ScriptObjectMirror) LameHttpRequest.this.onload;
+                    f.call(f);
+                    LameHttpRequest.this.onload = null;
 
-                    }
                 }
             }
         });

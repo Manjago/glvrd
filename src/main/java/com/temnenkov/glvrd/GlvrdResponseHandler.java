@@ -1,6 +1,5 @@
 package com.temnenkov.glvrd;
 
-import org.jsoup.parser.Parser;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.text.MessageFormat;
@@ -48,7 +47,7 @@ public class GlvrdResponseHandler {
 
         sb.append("\n");
         sb.append("<b>");
-        sb.append(text.substring(frag.getStart(), frag.getEnd()));
+        sb.append(text, frag.getStart(), frag.getEnd());
         sb.append("</b>");
         if (frag.getHint() != null) {
             sb.append(": ");
@@ -69,9 +68,8 @@ public class GlvrdResponseHandler {
         StringBuilder sb = new StringBuilder();
 
         int prev = 0;
-        for (int i = 0; i < workset.size(); ++i) {
-            Fragment f = workset.get(i);
-            if (f.getStart() > prev){
+        for (Fragment f : workset) {
+            if (f.getStart() > prev) {
                 sb.append(lameEscape(text.substring(prev, f.getStart())));
             }
             sb.append("<b>");
