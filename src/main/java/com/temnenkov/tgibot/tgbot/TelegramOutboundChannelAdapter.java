@@ -2,8 +2,8 @@ package com.temnenkov.tgibot.tgbot;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.temnenkov.glvrd.EscapeUtils;
 import com.temnenkov.tgibot.http.TelegramHttpSender;
 import com.temnenkov.tgibot.tgapi.method.SendMessage;
 import com.temnenkov.tgibot.tgapi.method.TelegramMethod;
@@ -36,16 +36,6 @@ public class TelegramOutboundChannelAdapter {
 
       SendMessage message = msg.getPayload();
 
-      // если сюда просочились <b> и </b> - то здесь их только тупо маскировать
-        final String oldText = message.getText();
-        if (oldText != null) {
-            final String escapedText = EscapeUtils.lameEscape(oldText);
-            if (!oldText.equals(escapedText)) {
-                LOGGER.warn("Fallback escape text from '{}' to '{}'", oldText, escapedText);
-                message.setText(escapedText);
-            }
-        }
-
         String request = gson.toJson(message);
 
         HttpPost httpPost = httpSender.createPost(TelegramMethod.SENDMESSAGE.name(), request);
@@ -63,15 +53,27 @@ public class TelegramOutboundChannelAdapter {
             JsonObject jsonObject = gson.fromJson(responseContent, JsonObject.class);
             if (!jsonObject.get("ok").getAsBoolean()) {
                 LOGGER.error("Error sending request = {}, response = {}, responseContent = {}", request, response, responseContent);
-                sendErrorMessage(message, responseContent);
+
+                JsonElement description = jsonObject.get("description");
+                if (description != null && description.getAsString() != null && description.getAsString().contains("can't parse entities")) {
+                   sendTooLongErrorMessage(message, responseContent);
+                } else {
+                    sendErrorMessage(message, responseContent);
+                }
             }
-
-
         }
 
     }
 
     private void sendErrorMessage(SendMessage message, String errResponse) {
+        coreSendErrorMessage(message, errResponse, "Ошибка, сообщите разработчику (https://t.me/glvrd2): {0}");
+    }
+
+    private void sendTooLongErrorMessage(SendMessage message, String errResponse) {
+        coreSendErrorMessage(message, errResponse, "Слишком длинный текст с форматированием (жирный шрифт, курсив и т.п.). Попробуйте разбить текст на несколько частей или избавиться от форматирования. Если даже после этого ошибка будет повторяться - сообщите разработчику (https://t.me/glvrd2): {0}");
+    }
+
+    private void coreSendErrorMessage(SendMessage message, String errResponse, String userText) {
 
         if (errResponse != null && errResponse.contains("bot was blocked")) {
             //blocked? ok
@@ -79,7 +81,7 @@ public class TelegramOutboundChannelAdapter {
         }
 
         message.setParseMode(null);
-        message.setText(MessageFormat.format("Ошибка, сообщите разработчику (https://t.me/glvrd2): {0}", errResponse));
+        message.setText(MessageFormat.format(userText, errResponse));
 
         MessagingTemplate template = new MessagingTemplate();
         template.send(outMessages, MessageBuilder.withPayload(message).build());
