@@ -9,6 +9,9 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.temnenkov.glvrd.EscapeUtils.lameEscape;
+import static com.temnenkov.glvrd.EscapeUtils.smooth;
+
 
 public class GlvrdResponseHandler {
 
@@ -81,27 +84,6 @@ public class GlvrdResponseHandler {
         }
 
         return sb.toString();
-    }
-
-    String lameEscape(String s) {
-        if (s == null) {
-            return s;
-        }
-
-        if (!s.contains("<") && !s.contains(">")) {
-            return s;
-        }
-
-        return s
-                .replace("<", "&lt;")
-                .replace(">", "&gt;");
-    }
-
-    String smooth(String s) {
-        if (s == null || s.length() == 0) {
-            return "";
-        }
-        return Parser.unescapeEntities(s.substring(0, 1).toLowerCase() + s.substring(1), false);
     }
 
     @Required

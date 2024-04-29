@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.temnenkov.tgibot.tgapi.dto.Update;
 import com.temnenkov.tgibot.tgapi.method.SendMessage;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -31,9 +32,25 @@ public class JdbcStatStore implements StatStore {
 
         final String content = gson.toJson(update);
 
-        LOGGER.debug("store {}",  content);
+        final Long id;
+        if (update.getMessage() != null && update.getMessage().getChat() != null) {
+            id = update.getMessage().getChat().getId();
+        } else {
+            id = null;
+        }
 
-        store(update.getMessage().getChat().getId(), content, UpdateType.UPDATE);
+        if (id == null) {
+            LOGGER.debug("No store new update for {} - id is null", update);
+            return;
+        }
+        LOGGER.debug("Storing new update for {}", update);
+        try {
+            store(id, content, UpdateType.UPDATE);
+        }  catch (Exception e) {
+            LOGGER.error("failed to store {}",  update, e);
+            throw e;
+        }
+
     }
 
     @Override
@@ -46,10 +63,15 @@ public class JdbcStatStore implements StatStore {
 
         LOGGER.debug("store {}",  content);
 
-        store(sendMessage.getChatId(), content, UpdateType.SENDMESSAGE);
+        try {
+            store(sendMessage.getChatId(), content, UpdateType.SENDMESSAGE);
+        } catch (Exception e) {
+            LOGGER.error("failed to store {}",  sendMessage, e);
+            throw e;
+        }
     }
 
-    private void store(Long id, String content, UpdateType updateType) {
+    private void store(@NotNull Long id, String content, @NotNull UpdateType updateType) {
         jdbcTemplate.update(Query.STORE.getSql(), ps -> {
             ps.setString(1, UUID.randomUUID().toString());
             ps.setLong(2, id);

@@ -131,40 +131,4 @@ public class GlvrdResponseHandlerTest {
         resp.setFragments(f);
         return resp;
     }
-
-    @Test
-    public void smooth() throws Exception {
-        assertEquals("большой", h.smooth("Большой"));
-    }
-
-    @Test
-    public void smooth1() throws Exception {
-        assertEquals("б", h.smooth("Б"));
-    }
-
-    @Test
-    public void smooth0() throws Exception {
-        assertEquals("", h.smooth(""));
-    }
-
-    @Test
-    public void smoothNull() throws Exception {
-        assertEquals("", h.smooth(null));
-    }
-
-    @Test
-    public void lameEscape() {
-        assertEquals("&lt;345&gt;", h.lameEscape("<345>"));
-    }
-
-    @Test
-    public void lameEscape2() {
-        assertEquals("345&gt;", h.lameEscape("345>") );
-    }
-
-    @Test
-    public void lameEscape3() {
-        assertEquals("345", h.lameEscape("345") );
-    }
-
 }
