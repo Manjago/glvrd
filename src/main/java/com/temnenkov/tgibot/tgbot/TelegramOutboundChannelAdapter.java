@@ -3,6 +3,7 @@ package com.temnenkov.tgibot.tgbot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.temnenkov.glvrd.EscapeUtils;
 import com.temnenkov.tgibot.http.TelegramHttpSender;
 import com.temnenkov.tgibot.tgapi.method.SendMessage;
 import com.temnenkov.tgibot.tgapi.method.TelegramMethod;
@@ -35,7 +36,17 @@ public class TelegramOutboundChannelAdapter {
 
       SendMessage message = msg.getPayload();
 
-      String request = gson.toJson(message);
+      // если сюда просочились <b> и </b> - то здесь их только тупо маскировать
+        final String oldText = message.getText();
+        if (oldText != null) {
+            final String escapedText = EscapeUtils.lameEscape(oldText);
+            if (!oldText.equals(escapedText)) {
+                LOGGER.warn("Fallback escape text from '{}' to '{}'", oldText, escapedText);
+                message.setText(escapedText);
+            }
+        }
+
+        String request = gson.toJson(message);
 
         HttpPost httpPost = httpSender.createPost(TelegramMethod.SENDMESSAGE.name(), request);
 
@@ -83,6 +94,5 @@ public class TelegramOutboundChannelAdapter {
     public void setOutMessages(MessageChannel outMessages) {
         this.outMessages = outMessages;
     }
-
 
 }
